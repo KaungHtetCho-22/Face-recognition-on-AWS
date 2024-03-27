@@ -9,7 +9,7 @@ aws rekognition delete-collection --collection-id collection_name --region us-ea
 # create collection
 aws rekognition create-collection --collection-id testCollection --region us-east-1
 
--------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------
 
 ## DynamoDB
 
@@ -41,6 +41,5 @@ aws s3 rb s3://bucket-name --force
 
 scp -i /path/to/your/key.pem -r your_flask_app_directory ec2-user@your_ec2_public_ip:/home/ec2-user/app
 
------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
 
-    
