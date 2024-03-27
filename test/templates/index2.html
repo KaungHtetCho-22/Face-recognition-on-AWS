@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Webcam Facial Recognition</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
     <h1>Webcam Facial Recognition</h1>
@@ -13,19 +14,16 @@
     <button id="capture-btn">Capture Image</button>
     <canvas id="canvas" style="display:none;" width="640" height="480"></canvas>
     <br>
-    <button id="recognize-btn">Recognize</button>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var video = document.getElementById('video');
-            var canvas = document.getElementById('canvas');
-            var context = canvas.getContext('2d');
-            var captureBtn = document.getElementById('capture-btn');
-            var recognizeBtn = document.getElementById('recognize-btn');
+    <img id="captured-image" src="" alt="Captured Image" style="display:none;">
+    <button id="recognize-btn" style="display:none;">Recognize</button>
+    <p id="recognized-name" style="display:none;"></p> <!-- Add a paragraph element to display recognized name -->
 
+    <script>
+        $(document).ready(function() {
             // Access webcam and display video feed
             navigator.mediaDevices.getUserMedia({ video: true })
             .then(function(stream) {
+                var video = document.getElementById('video');
                 video.srcObject = stream;
                 video.play();
             })
@@ -34,35 +32,46 @@
             });
 
             // Function to capture image from webcam
-            captureBtn.addEventListener('click', function() {
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            $('#capture-btn').click(function() {
+                var video = document.getElementById('video');
+                var canvas = document.getElementById('canvas');
+                var context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, video.width, video.height); // Use video dimensions
+                var dataURL = canvas.toDataURL('image/jpeg');
+                
+                // Show the captured image
+                var img = document.getElementById('captured-image');
+                img.src = dataURL;
+                img.style.display = 'block';
+                
+                // Show the recognize button
+                var recognizeBtn = document.getElementById('recognize-btn');
+                recognizeBtn.style.display = 'block';
             });
 
             // Function to trigger recognition process
-            recognizeBtn.addEventListener('click', function() {
-                var imageData = canvas.toDataURL('image/jpeg');
+            $('#recognize-btn').click(function() {
+                var img = document.getElementById('captured-image');
+                var dataURL = img.src;
                 
-                // Send captured image to Flask application for processing
-                fetch('/process_image', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ image_data: imageData })
-                })
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(data) {
-                    console.log(data);
-                    if (data.status === 'recognized') {
-                        alert('Person recognized: ' + data.name);
-                    } else {
-                        alert('Person cannot be recognized');
+                // Send captured image to server for processing
+                $.ajax({
+                    type: 'POST',
+                    url: '/process_image',
+                    data: { image_data: dataURL },
+                    success: function(response) {
+                        console.log(response);
+                        if (response.status === 'recognized') {
+                            // Display recognized name on the webpage
+                            var recognizedName = document.getElementById('recognized-name');
+                            recognizedName.textContent = 'Recognized Name: ' + response.name;
+                            recognizedName.style.display = 'block';
+                            // Display pop-up message
+                            alert('Person recognized: ' + response.name);
+                        } else {
+                            alert('Person cannot be recognized');
+                        }
                     }
-                })
-                .catch(function(error) {
-                    console.error('Error:', error);
                 });
             });
         });

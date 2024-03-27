@@ -1,10 +1,10 @@
 from flask import Flask, render_template, jsonify, request
 import boto3
 import cv2
+import io
 import numpy as np
 from PIL import Image
 import base64
-import io
 
 app = Flask(__name__)
 
@@ -21,10 +21,9 @@ def index():
 @app.route('/process_image', methods=['POST'])
 def process_image():
     # Get image data from POST request
-    data_url = request.json.get('image_data')
-
+    image_data = request.form['image_data']
     # Remove header from base64 encoded image
-    encoded_image = data_url.split(",")[1]
+    encoded_image = image_data.split(",")[1]
     # Decode base64 image and convert to OpenCV format
     nparr = np.frombuffer(base64.b64decode(encoded_image), np.uint8)
     frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
