@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Facial Recognition App</title>
+</head>
+<body>
+    <h1>Facial Recognition</h1>
+
+    <form id="recognition-form" enctype="multipart/form-data">
+        <label for="image">Upload Image:</label>
+        <input type="file" id="image" name="image" accept="image/*" required>
+        <button type="submit">Recognize</button>
+    </form>
+
+    <div id="recognition-result">
+        {% if recognition_result %}
+            {% if recognition_result.status == 'recognized' %}
+                <p>Recognized: {{ recognition_result.name }}</p>
+            {% else %}
+                <p>{{ recognition_result.status }}</p>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <script>
+        const form = document.getElementById('recognition-form');
+        const resultDiv = document.getElementById('recognition-result');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+
+            resultDiv.innerHTML = 'Processing...';
+
+            try {
+                const response = await fetch('/recognize', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.text();
+                resultDiv.innerHTML = data;
+            } catch (error) {
+                console.error(error);
+                resultDiv.innerHTML = 'An error occurred';
+            }
+        });
+    </script>
+</body>
+</html>

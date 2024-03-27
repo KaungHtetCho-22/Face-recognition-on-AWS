@@ -1,0 +1,19 @@
+# Install Python3 and pip
+sudo yum install python3 python3-pip
+
+# OpenCV dependencies for ec2
+sudo yum install -y libglvnd-devel
+
+# Install Flask
+pip3 install flask
+
+# Install OpenCV
+pip3 install opencv-python
+
+# Install Boto3 (AWS SDK for Python)
+pip3 install boto3
+  
+# For PIL
+pip3 install Pillow
+
+# Install git
