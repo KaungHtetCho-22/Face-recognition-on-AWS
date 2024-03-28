@@ -3,8 +3,8 @@ Cloud computing project from AIT
 
 ### Progress report 
 
-- Attached well-architected framework at the proposal chapter 4
-- Attached estimated cost calculated with aws pricing calculator at the appendix
+- Attached well-architected framework at the project pdf's chapter 4
+- Attached estimated cost calculated with aws pricing calculator at the project pdf's appendix
 
 
 
