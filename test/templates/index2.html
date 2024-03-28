@@ -4,20 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Webcam Facial Recognition</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        #header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+        #video-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 800px; /* Adjust maximum width as needed */
+            margin: 20px auto;
+        }
+        #video, #captured-image {
+            width: calc(50% - 10px); /* Adjust width and margin as needed */
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        #capture-btn, #recognize-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+        }
+        #capture-btn:hover, #recognize-btn:hover {
+            background-color: #0056b3;
+        }
+        #recognized-name {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+            color: #007bff;
+        }
+    </style>
 </head>
 <body>
-    <h1>Webcam Facial Recognition</h1>
+    <div id="header">
+        <h1>Webcam Facial Recognition</h1>
+    </div>
     <div id="video-container">
         <video id="video" width="640" height="480" autoplay></video>
+        <img id="captured-image" src="" alt="Captured Image">
     </div>
     <button id="capture-btn">Capture Image</button>
     <canvas id="canvas" style="display:none;" width="640" height="480"></canvas>
-    <br>
-    <img id="captured-image" src="" alt="Captured Image" style="display:none;">
     <button id="recognize-btn" style="display:none;">Recognize</button>
     <p id="recognized-name" style="display:none;"></p> <!-- Add a paragraph element to display recognized name -->
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function() {
             // Access webcam and display video feed
@@ -42,7 +91,6 @@
                 // Show the captured image
                 var img = document.getElementById('captured-image');
                 img.src = dataURL;
-                img.style.display = 'block';
                 
                 // Show the recognize button
                 var recognizeBtn = document.getElementById('recognize-btn');
