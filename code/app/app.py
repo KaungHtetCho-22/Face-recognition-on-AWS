@@ -1,8 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import boto3
-import cv2
 import io
-from PIL import Image
 
 app = Flask(__name__)
 
@@ -26,24 +24,21 @@ def recognize():
     # Get the image data from the request
     image_data = request.files['image'].read()
 
-    # Convert the image data to a byte stream
-    image_binary = io.BytesIO(image_data)
-
     # Use AWS Rekognition to search for faces in the image
     response = rekognition.search_faces_by_image(
         CollectionId='testCollection',
-        Image={'Bytes': image_binary.getvalue()}
+        Image={'Bytes': image_data}
     )
 
-    # Process the response and render the template with recognition result
+    # Process the response and return the recognition result
     result = process_recognition_response(response)
-    return render_template('index.html', recognition_result=result)
+    return jsonify(result)
 
 def process_recognition_response(response):
     found = False
     result = {'status': 'not_recognized'}
 
-    for match in response['FaceMatches']:
+    for match in response.get('FaceMatches', []):
         face = dynamodb.get_item(
             TableName='testTable',
             Key={'RekognitionId': {'S': match['Face']['FaceId']}}
