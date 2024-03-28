@@ -2,24 +2,87 @@
 <html>
 <head>
     <title>Facial Recognition App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="file"] {
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            width: 100%;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #recognition-result {
+            margin-top: 20px;
+        }
+
+        .status {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .recognized {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
 </head>
 <body>
-    <h1>Facial Recognition</h1>
+    <div class="container">
+        <h1>Facial Recognition</h1>
 
-    <form id="recognition-form" enctype="multipart/form-data">
-        <label for="image">Upload Image:</label>
-        <input type="file" id="image" name="image" accept="image/*" required>
-        <button type="submit">Recognize</button>
-    </form>
+        <form id="recognition-form" enctype="multipart/form-data">
+            <label for="image">Upload Image:</label>
+            <input type="file" id="image" name="image" accept="image/*" required>
+            <button type="submit">Recognize</button>
+        </form>
 
-    <div id="recognition-result">
-        {% if recognition_result %}
-            {% if recognition_result.status == 'recognized' %}
-                <p>Recognized: {{ recognition_result.name }}</p>
-            {% else %}
-                <p>{{ recognition_result.status }}</p>
-            {% endif %}
-        {% endif %}
+        <div id="recognition-result"></div>
     </div>
 
     <script>

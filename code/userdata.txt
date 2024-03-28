@@ -17,3 +17,4 @@ pip3 install boto3
 pip3 install Pillow
 
 # Install git
+sudo yum install git -y
