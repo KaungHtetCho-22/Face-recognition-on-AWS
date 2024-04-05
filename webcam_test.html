@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Webcam Test</title>
+    <script>
+        function startWebcam() {
+            navigator.mediaDevices.getUserMedia({video: true})
+                .then(function(stream) {
+                    const video = document.getElementById('video');
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(function(error) {
+                    console.log('Error accessing webcam:', error);
+                });
+        }
+    </script>
+</head>
+<body onload="startWebcam()">
+    <h1>Webcam Test</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+</body>
+</html>
