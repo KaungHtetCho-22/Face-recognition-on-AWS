@@ -26,6 +26,7 @@ aws dynamodb create-table --table-name testTable \
 ## S3
 
 # create bucket
+aws s3 mb s3://kaung-test-bucket --region us-east-1
 
 aws s3 mb s3://kaung-test-bucket --region us-east-1
 

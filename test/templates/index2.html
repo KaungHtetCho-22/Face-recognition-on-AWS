@@ -1,128 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webcam Facial Recognition</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
-        }
-        #header {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 20px 0;
-        }
-        #video-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 800px; /* Adjust maximum width as needed */
-            margin: 20px auto;
-        }
-        #video, #captured-image {
-            width: calc(50% - 10px); /* Adjust width and margin as needed */
-            max-width: 100%;
-            height: auto;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            background-color: #fff;
-        }
-        #capture-btn, #recognize-btn {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            font-size: 18px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background-color: #007bff;
-            color: #fff;
-        }
-        #capture-btn:hover, #recognize-btn:hover {
-            background-color: #0056b3;
-        }
-        #recognized-name {
-            text-align: center;
-            font-size: 18px;
-            margin-top: 20px;
-            color: #007bff;
-        }
-    </style>
-</head>
-<body>
-    <div id="header">
-        <h1>Webcam Facial Recognition</h1>
-    </div>
-    <div id="video-container">
-        <video id="video" width="640" height="480" autoplay></video>
-        <img id="captured-image" src="" alt="Captured Image">
-    </div>
-    <button id="capture-btn">Capture Image</button>
-    <canvas id="canvas" style="display:none;" width="640" height="480"></canvas>
-    <button id="recognize-btn" style="display:none;">Recognize</button>
-    <p id="recognized-name" style="display:none;"></p> <!-- Add a paragraph element to display recognized name -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>Face Recognition</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-            // Access webcam and display video feed
-            navigator.mediaDevices.getUserMedia({ video: true })
-            .then(function(stream) {
-                var video = document.getElementById('video');
-                video.srcObject = stream;
-                video.play();
-            })
-            .catch(function(err) {
-                console.log("Error accessing webcam: ", err);
-            });
-
-            // Function to capture image from webcam
-            $('#capture-btn').click(function() {
-                var video = document.getElementById('video');
-                var canvas = document.getElementById('canvas');
-                var context = canvas.getContext('2d');
-                context.drawImage(video, 0, 0, video.width, video.height); // Use video dimensions
-                var dataURL = canvas.toDataURL('image/jpeg');
-                
-                // Show the captured image
-                var img = document.getElementById('captured-image');
-                img.src = dataURL;
-                
-                // Show the recognize button
-                var recognizeBtn = document.getElementById('recognize-btn');
-                recognizeBtn.style.display = 'block';
-            });
-
-            // Function to trigger recognition process
-            $('#recognize-btn').click(function() {
-                var img = document.getElementById('captured-image');
-                var dataURL = img.src;
-                
-                // Send captured image to server for processing
-                $.ajax({
-                    type: 'POST',
-                    url: '/process_image',
-                    data: { image_data: dataURL },
-                    success: function(response) {
-                        console.log(response);
-                        if (response.status === 'recognized') {
-                            // Display recognized name on the webpage
-                            var recognizedName = document.getElementById('recognized-name');
-                            recognizedName.textContent = 'Recognized Name: ' + response.name;
-                            recognizedName.style.display = 'block';
-                            // Display pop-up message
-                            alert('Person recognized: ' + response.name);
-                        } else {
-                            alert('Person cannot be recognized');
-                        }
+        function captureImage() {
+            const video = document.getElementById('video');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL('image/jpeg');
+            
+            $.ajax({
+                url: '/process_image',
+                type: 'POST',
+                data: {image_data: imageData},
+                success: function(response) {
+                    if (response.status === 'recognized') {
+                        alert('Person recognized: ' + response.name);
+                    } else {
+                        alert('Person cannot be recognized');
                     }
-                });
+                }
             });
-        });
+        }
+        
+        function startWebcam() {
+            navigator.mediaDevices.getUserMedia({video: true})
+                .then(function(stream) {
+                    const video = document.getElementById('video');
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(function(error) {
+                    console.log('Error accessing webcam:', error);
+                });
+        }
     </script>
+</head>
+<body onload="startWebcam()">
+    <h1>Face Recognition</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+    <br>
+    <button onclick="captureImage()">Capture Image</button>
 </body>
 </html>

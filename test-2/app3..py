@@ -22,40 +22,40 @@ def index():
 def process_image():
     # Get image data from POST request
     image_data = request.form['image_data']
-    
     # Remove header from base64 encoded image
     encoded_image = image_data.split(",")[1]
-    
     # Decode base64 image and convert to OpenCV format
     nparr = np.frombuffer(base64.b64decode(encoded_image), np.uint8)
     frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    
+
     # Convert the frame to a PIL Image
     img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-    
+
     # Convert the PIL Image to a byte stream
     stream = io.BytesIO()
     img.save(stream, format="JPEG")
     image_binary = stream.getvalue()
-    
+
     # Use AWS Rekognition to search for faces in the frame
     response = rekognition.search_faces_by_image(
         CollectionId='testCollection',
         Image={'Bytes': image_binary}
     )
-    
+
     found = False
     for match in response.get('FaceMatches', []):
         print(match['Face']['FaceId'], match['Face']['Confidence'])
+
         face = dynamodb.get_item(
             TableName='testTable',
             Key={'RekognitionId': {'S': match['Face']['FaceId']}}
         )
+
         if 'Item' in face:
             print("Found Person: ", face['Item']['FullName']['S'])
             found = True
             return jsonify({'status': 'recognized', 'name': face['Item']['FullName']['S']})
-    
+
     if not found:
         print("Person cannot be recognized")
         return jsonify({'status': 'not_recognized'})

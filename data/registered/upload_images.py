@@ -20,9 +20,9 @@ images = [
     ('image14.jpg', 'Win Phyo'),
     ('image15.jpg', 'Phone Myint Zaw'),
     ('image16.jpg', 'Boss'),
-      ('image17.jpg', 'Aung Myat Thu'),
-      ('image18.jpg', 'Lin Htun Naing'),
-      ('image19.jpg', 'Myo Thiha')
+    ('image17.jpg', 'Aung Myat Thu'),
+    ('image18.jpg', 'Lin Htun Naing'),
+    ('image19.jpg', 'Myo Thiha')
 ]
 
 # Iterate through list to upload objects to S3   
