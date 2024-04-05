@@ -13,7 +13,7 @@ dynamodb = boto3.client('dynamodb', region_name='us-east-1')
 @app.route('/')
 def index():
     ec2_url = 'http://35.153.140.177:8080'  # Replace with your EC2 instance's public IP or DNS
-    return render_template('index3.html', ec2_url=ec2_url)
+    return render_template('index4.html', ec2_url=ec2_url)
 
 # Route to process captured image and perform facial recognition
 @app.route('/process_image', methods=['POST'])
