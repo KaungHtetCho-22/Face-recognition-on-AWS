@@ -1,10 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 import boto3
-import cv2
 import io
-import numpy as np
 from PIL import Image
-import base64
 
 app = Flask(__name__)
 
@@ -15,42 +12,31 @@ dynamodb = boto3.client('dynamodb', region_name='us-east-1')
 # Route to display webcam feed and recognize faces
 @app.route('/')
 def index():
-    return render_template('index4.html')
+    ec2_url = 'http://35.153.140.177:8080'  # Replace with your EC2 instance's public IP or DNS
+    return render_template('index3.html', ec2_url=ec2_url)
 
 # Route to process captured image and perform facial recognition
 @app.route('/process_image', methods=['POST'])
 def process_image():
-    # Get image data from POST request
-    image_data = request.form['image_data']
-    # Remove header from base64 encoded image
-    encoded_image = image_data.split(",")[1]
-    # Decode base64 image and convert to OpenCV format
-    nparr = np.frombuffer(base64.b64decode(encoded_image), np.uint8)
-    frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    if 'image' not in request.files:
+        return jsonify({'status': 'error', 'message': 'No image uploaded'})
 
-    # Convert the frame to a PIL Image
-    img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+    image_file = request.files['image']
+    image_bytes = image_file.read()
 
-    # Convert the PIL Image to a byte stream
-    stream = io.BytesIO()
-    img.save(stream, format="JPEG")
-    image_binary = stream.getvalue()
-
-    # Use AWS Rekognition to search for faces in the frame
+    # Use AWS Rekognition to search for faces in the image
     response = rekognition.search_faces_by_image(
         CollectionId='testCollection',
-        Image={'Bytes': image_binary}
+        Image={'Bytes': image_bytes}
     )
 
     found = False
     for match in response.get('FaceMatches', []):
         print(match['Face']['FaceId'], match['Face']['Confidence'])
-
         face = dynamodb.get_item(
             TableName='testTable',
             Key={'RekognitionId': {'S': match['Face']['FaceId']}}
         )
-
         if 'Item' in face:
             print("Found Person: ", face['Item']['FullName']['S'])
             found = True
