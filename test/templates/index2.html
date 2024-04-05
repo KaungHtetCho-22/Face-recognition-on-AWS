@@ -22,6 +22,9 @@
                     } else {
                         alert('Person cannot be recognized');
                     }
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error:', error);
                 }
             });
         }

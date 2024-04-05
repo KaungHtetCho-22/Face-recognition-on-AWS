@@ -22,43 +22,54 @@ def index():
 def process_image():
     # Get image data from POST request
     image_data = request.form['image_data']
+    print("Received image data:", image_data[:50])  # Print the first 50 characters of image_data
     
     # Remove header from base64 encoded image
     encoded_image = image_data.split(",")[1]
+    print("Encoded image:", encoded_image[:50])  # Print the first 50 characters of encoded_image
     
-    # Decode base64 image and convert to OpenCV format
-    nparr = np.frombuffer(base64.b64decode(encoded_image), np.uint8)
-    frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    
-    # Convert the frame to a PIL Image
-    img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-    
-    # Convert the PIL Image to a byte stream
-    stream = io.BytesIO()
-    img.save(stream, format="JPEG")
-    image_binary = stream.getvalue()
-    
-    # Use AWS Rekognition to search for faces in the frame
-    response = rekognition.search_faces_by_image(
-        CollectionId='testCollection',
-        Image={'Bytes': image_binary}
-    )
-    
-    found = False
-    for match in response.get('FaceMatches', []):
-        print(match['Face']['FaceId'], match['Face']['Confidence'])
-        face = dynamodb.get_item(
-            TableName='testTable',
-            Key={'RekognitionId': {'S': match['Face']['FaceId']}}
+    try:
+        # Decode base64 image and convert to OpenCV format
+        nparr = np.frombuffer(base64.b64decode(encoded_image), np.uint8)
+        print("Decoded image data:", nparr[:10])  # Print the first 10 elements of nparr
+        frame = cv2.imdecode(nparr, cv2.IMREAD_UNCHANGED)
+        
+        if frame is None:
+            raise ValueError("Failed to decode image")
+        
+        # Convert the frame to a PIL Image
+        img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        
+        # Convert the PIL Image to a byte stream
+        stream = io.BytesIO()
+        img.save(stream, format="JPEG")
+        image_binary = stream.getvalue()
+        
+        # Use AWS Rekognition to search for faces in the frame
+        response = rekognition.search_faces_by_image(
+            CollectionId='testCollection',
+            Image={'Bytes': image_binary}
         )
-        if 'Item' in face:
-            print("Found Person: ", face['Item']['FullName']['S'])
-            found = True
-            return jsonify({'status': 'recognized', 'name': face['Item']['FullName']['S']})
+        
+        found = False
+        for match in response.get('FaceMatches', []):
+            print(match['Face']['FaceId'], match['Face']['Confidence'])
+            face = dynamodb.get_item(
+                TableName='testTable',
+                Key={'RekognitionId': {'S': match['Face']['FaceId']}}
+            )
+            if 'Item' in face:
+                print("Found Person: ", face['Item']['FullName']['S'])
+                found = True
+                return jsonify({'status': 'recognized', 'name': face['Item']['FullName']['S']})
+        
+        if not found:
+            print("Person cannot be recognized")
+            return jsonify({'status': 'not_recognized'})
     
-    if not found:
-        print("Person cannot be recognized")
-        return jsonify({'status': 'not_recognized'})
+    except Exception as e:
+        print("Error processing image:", str(e))
+        return jsonify({'status': 'error', 'message': 'Failed to process image'})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
