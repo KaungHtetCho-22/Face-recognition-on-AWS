@@ -15,7 +15,7 @@ dynamodb = boto3.client('dynamodb', region_name='us-east-1')
 # Route to display webcam feed and recognize faces
 @app.route('/')
 def index():
-    return render_template('index2.html')
+    return render_template('index3.html')
 
 # Route to process captured image and perform facial recognition
 @app.route('/process_image', methods=['POST'])
