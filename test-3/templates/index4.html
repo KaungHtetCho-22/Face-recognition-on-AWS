@@ -1,25 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Facial Recognition</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Facial Recognition</title>
+    <style>
+        /* CSS styles */
+    </style>
 </head>
 <body>
-    <h1>Facial Recognition</h1>
+    <div id="header">
+        <h1>Webcam Facial Recognition</h1>
+    </div>
     <video id="video" width="640" height="480" autoplay></video>
-    <button id="capture">Capture</button>
-    <div id="result"></div>
-
+    <button id="capture-btn">Capture Image</button>
+    <canvas id="canvas" style="display:none;" width="640" height="480"></canvas>
+    <p id="recognized-name" style="display:none;"></p> <!-- Add a paragraph element to display recognized name -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        // Access the webcam feed
         navigator.mediaDevices.getUserMedia({ video: true })
-            .then(function (stream) {
-                var video = document.getElementById('video');
-                video.srcObject = stream;
-            })
-            .catch(function (err) {
-                console.log("An error occurred: " + err);
-            });
+        .then(function(stream) {
+            var video = document.getElementById('video');
+            video.srcObject = stream;
+            video.play();
+        })
+        .catch(function(err) {
+            console.log("Error accessing webcam: ", err);
+        });
 
-        // Capture image from webcam feed
-        document
+        document.getElementById('capture-btn').addEventListener('click', function() {
+            var video = document.getElementById('video');
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, video.width, video.height); // Use video dimensions
+            var dataURL = canvas.toDataURL('image/jpeg');
+            
+            // Send captured image to server for processing
+            $.ajax({
+                type: 'POST',
+                url: '/process_image',
+                data: { image_data: dataURL },
+                success: function(response) {
+                    console.log(response);
+                    if (response.status === 'recognized') {
+                        var recognizedName = document.getElementById('recognized-name');
+                        recognizedName.textContent = 'Recognized Name: ' + response.name;
+                        recognizedName.style.display = 'block';
+                        alert('Person recognized: ' + response.name);
+                    } else {
+                        alert('Person cannot be recognized');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
