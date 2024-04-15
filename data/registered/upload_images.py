@@ -14,20 +14,19 @@ images = [
     ('image8.jpg', 'Min Thet'),
     ('image9.jpg', 'Poe Poe'),
     ('image10.jpg', 'Kaung Htet Cho'),
-    ('image11.jpg', 'Kaung Htet Cho'),
-    ('image12.jpg', 'Kaung Htet Cho'),
-    ('image13.jpg', 'Kaung Htet Cho'),
     ('image14.jpg', 'Win Phyo'),
     ('image15.jpg', 'Phone Myint Zaw'),
     ('image16.jpg', 'Boss'),
     ('image17.jpg', 'Aung Myat Thu'),
     ('image18.jpg', 'Lin Htun Naing'),
-    ('image19.jpg', 'Myo Thiha')
+    ('image19.jpg', 'Myo Thiha'),
+    ('image20.jpg', 'Jurgen Klopp'),
+
 ]
 
 # Iterate through list to upload objects to S3   
 for image in images:
     file = open(image[0],'rb')
-    object = s3.Object('kaung-test-bucket','index/'+ image[0])
+    object = s3.Object('kaunghtetcho-test-bucket','index/'+ image[0])
     ret = object.put(Body=file,
                     Metadata={'FullName':image[1]})
