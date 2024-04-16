@@ -3,40 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webcam Access</title>
+    <title>Webcam Stream</title>
 </head>
 <body>
-    <h1>Webcam Access</h1>
-    <div>
-        <video id="video" width="640" height="480" autoplay></video>
-    </div>
-    <button id="startButton">Start Webcam</button>
-    <button id="stopButton">Stop Webcam</button>
-    
-    <script>
-        const video = document.getElementById('video');
-        const startButton = document.getElementById('startButton');
-        const stopButton = document.getElementById('stopButton');
-
-        startButton.addEventListener('click', async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                video.srcObject = stream;
-            } catch (err) {
-                console.error('Error accessing webcam:', err);
-            }
-        });
-
-        stopButton.addEventListener('click', () => {
-            const stream = video.srcObject;
-            const tracks = stream.getTracks();
-
-            tracks.forEach(track => {
-                track.stop();
-            });
-
-            video.srcObject = null;
-        });
-    </script>
+    <h1>Webcam Stream</h1>
+    <img id="video_feed" src="{{ url_for('video_feed') }}" width="640" height="480" autoplay>
 </body>
 </html>
