@@ -16,7 +16,7 @@
                 "s3:GetObject"
             ],
             "Resource": [
-                "arn:aws:s3:::kaung-test-bucket/*"
+                "arn:aws:s3:::kaunghtetcho-test-bucket/*"
             ]
         },
         {

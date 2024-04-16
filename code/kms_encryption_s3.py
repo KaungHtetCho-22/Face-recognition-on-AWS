@@ -5,10 +5,10 @@ import json
 s3_client = boto3.client('s3')
 
 # Define the KMS key ID
-kms_key_id = 'e7c683e9-626e-4306-9a01-23ccf3230b9b'  # Replace with your KMS key ID
+kms_key_id = 'e7c683e9-626e-4306-9a01-23ccf3230b9b'  
 
 # Define the bucket name
-bucket_name = 'winphyo-bucket'  # Replace with your bucket name
+bucket_name = 'kaunghtetcho-test-bucket'  
 
 # Define the bucket policy
 bucket_policy = {

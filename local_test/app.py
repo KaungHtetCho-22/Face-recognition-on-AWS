@@ -1,18 +1,32 @@
+from flask import Flask, render_template, jsonify, request
 import boto3
 import cv2
 import io
+import numpy as np
 from PIL import Image
+import base64
+
+app = Flask(__name__)
 
 # Initialize AWS clients
 rekognition = boto3.client('rekognition', region_name='us-east-1')
 dynamodb = boto3.client('dynamodb', region_name='us-east-1')
 
-# Open the webcam
-cap = cv2.VideoCapture(0)
+# Route to display webcam feed and recognize faces
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-while True:
-    # Capture a frame from the webcam
-    ret, frame = cap.read()
+# Route to process captured image and perform facial recognition
+@app.route('/process_image', methods=['POST'])
+def process_image():
+    # Get image data from POST request
+    image_data = request.form['image_data']
+    # Remove header from base64 encoded image
+    encoded_image = image_data.split(",")[1]
+    # Decode base64 image and convert to OpenCV format
+    nparr = np.frombuffer(base64.b64decode(encoded_image), np.uint8)
+    frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
     # Convert the frame to a PIL Image
     img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
@@ -29,8 +43,7 @@ while True:
     )
 
     found = False
-
-    for match in response['FaceMatches']:
+    for match in response.get('FaceMatches', []):
         print(match['Face']['FaceId'], match['Face']['Confidence'])
 
         face = dynamodb.get_item(
@@ -41,17 +54,11 @@ while True:
         if 'Item' in face:
             print("Found Person: ", face['Item']['FullName']['S'])
             found = True
+            return jsonify({'status': 'recognized', 'name': face['Item']['FullName']['S']})
 
     if not found:
         print("Person cannot be recognized")
+        return jsonify({'status': 'not_recognized'})
 
-    # Display the frame
-    cv2.imshow('Webcam', frame)
-
-    # Break the loop if the 'q' key is pressed
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# Release the webcam and close the window
-cap.release()
-cv2.destroyAllWindows()
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080, debug=True)
