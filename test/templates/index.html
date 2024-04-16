@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Streaming</title>
+    <style>
+        /* Style for centering the video */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #video {
+            border: 2px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Webcam Streaming</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+
+    <script>
+        // JavaScript to handle webcam streaming
+        var video = document.getElementById('video');
+
+        // Check if the browser supports the getUserMedia API
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            // Get access to the webcam stream
+            navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+                // Display the webcam stream in the video element
+                video.srcObject = stream;
+                video.play();
+            });
+        } else {
+            console.error('getUserMedia is not supported by this browser');
+        }
+    </script>
+</body>
+</html>
