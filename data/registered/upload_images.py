@@ -17,7 +17,7 @@ images = [
     ('image10.jpg', 'Kaung Htet Cho'),
     ('image14.jpg', 'Win Phyo'),
     ('image15.jpg', 'Phone Myint Zaw'),
-    ('image16.jpg', 'Boss'),
+    ('image16.jpg', 'Boss'), # This is the cat photo, it will not be recognized
     ('image17.jpg', 'Aung Myat Thu'),
     ('image18.jpg', 'Lin Htun Naing'),
     ('image19.jpg', 'Myo Thiha'),
