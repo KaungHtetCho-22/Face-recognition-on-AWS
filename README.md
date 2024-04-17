@@ -45,7 +45,7 @@ Cloud computing project from AIT
 - Git clone this repo in EC2 instance
 - *You will need to import user's AWS ACCESS KEY ID and AWS SECRET ACCESS KEY into EC2 instance*
 - Run the code/app/app.py for webhosting
-- Access through <yourec2publicip>:8080
+- Access through 'yourec2publicip':8080
 
 <img src='screenshot/image.png' alt="Step 1" width="600px" style="float: center" />
 <figcaption> Web app running on EC2 instance server </figcaption>
