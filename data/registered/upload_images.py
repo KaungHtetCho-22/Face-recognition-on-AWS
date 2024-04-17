@@ -5,23 +5,24 @@ s3 = boto3.resource('s3')
 
 # Get list of objects for indexing
 images = [
-    ('image1.jpg', 'Allison Becker'),
-    ('image2.jpg', 'Andy Robertson'),
-    ('image3.jpg', 'Mac Allister'),
-    ('image4.jpg', 'Mohamad Salah'),
-    ('image5.jpg', 'Trent Arnold'),
-    ('image6.jpg', 'Van Dijki'),
-    ('image7.jpg', 'Minn Banya'),
-    ('image8.jpg', 'Min Thet'),
-    ('image9.jpg', 'Poe Poe'),
-    ('image10.jpg', 'Kaung Htet Cho'),
-    ('image14.jpg', 'Win Phyo'),
-    ('image15.jpg', 'Phone Myint Zaw'),
-    ('image16.jpg', 'Boss'), # This is the cat photo, it will not be recognized
-    ('image17.jpg', 'Aung Myat Thu'),
-    ('image18.jpg', 'Lin Htun Naing'),
-    ('image19.jpg', 'Myo Thiha'),
-    ('image20.jpg', 'Jurgen Klopp'),
+    # ('image1.jpg', 'Allison Becker'),
+    # ('image2.jpg', 'Andy Robertson'),
+    # ('image3.jpg', 'Mac Allister'),
+    # ('image4.jpg', 'Mohamad Salah'),
+    # ('image5.jpg', 'Trent Arnold'),
+    # ('image6.jpg', 'Van Dijki'),
+    # ('image7.jpg', 'Minn Banya'),
+    # ('image8.jpg', 'Min Thet'),
+    # ('image9.jpg', 'Poe Poe'),
+    # ('image10.jpg', 'Kaung Htet Cho'),
+    # ('image14.jpg', 'Win Phyo'),
+    # ('image15.jpg', 'Phone Myint Zaw'),
+    # ('image16.jpg', 'Boss'), # This is the cat photo, it will not be recognized
+    # ('image17.jpg', 'Aung Myat Thu'),
+    # ('image18.jpg', 'Lin Htun Naing'),
+    # ('image19.jpg', 'Myo Thiha'),
+    # ('image20.jpg', 'Jurgen Klopp'),
+    ('image21.png', 'Dr Chantri Polprasert')
 
 ]
 
