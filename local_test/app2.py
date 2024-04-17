@@ -59,6 +59,9 @@ def process_image():
     if not found:
         print("Person cannot be recognized")
         return jsonify({'status': 'not_recognized'})
-
+    
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=443, debug=True, ssl_context='adhoc')
+
+
+    
